@@ -23,9 +23,8 @@ package cmd
 import (
   "fmt"
   "regexp"
-  "os"
-  "os/exec"
 
+  "github.com/micke/devflow/git"
   "github.com/spf13/cobra"
 )
 
@@ -42,13 +41,7 @@ var pullRequestCmd = &cobra.Command{
   Run: func(cmd *cobra.Command, args []string) {
     storyUrlBase := fmt.Sprintf("%s/entity", baseUrl)
     storyUrlPattern := fmt.Sprintf("%s/([0-9]+)", baseUrl)
-
-    branchCmd := exec.Command("git", "rev-parse", "--abbrev-ref", "HEAD")
-    branch, err := branchCmd.CombinedOutput()
-    if err != nil {
-      fmt.Printf("Error finding branch: %s %s\n", err, branch)
-      os.Exit(1)
-    }
+    branch := git.GetCurrentBranch()
 
     fmt.Println(branch)
     fmt.Println(storyUrlBase)
