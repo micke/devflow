@@ -29,6 +29,7 @@ import (
   "github.com/spf13/viper"
 )
 
+var verbose bool
 var cfgFile string
 var accessToken string
 var baseUrl string
@@ -59,6 +60,7 @@ func init() {
   // Cobra supports persistent flags, which, if defined here,
   // will be global for your application.
   rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.devflow.yaml)")
+  rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "enable verbose")
   rootCmd.PersistentFlags().String("baseurl", "", "base URL to TP. Ex: https://project.tpondemand.com")
   rootCmd.PersistentFlags().String("accesstoken", "", "Your TP access token")
   rootCmd.PersistentFlags().String("userid", "", "Your TP user ID")
@@ -89,7 +91,9 @@ func initConfig() {
 
   // If a config file is found, read it in.
   if err := viper.ReadInConfig(); err == nil {
-    fmt.Println("Using config file:", viper.ConfigFileUsed())
+    if (verbose) {
+      fmt.Println("Using config file:", viper.ConfigFileUsed())
+    }
   }
 
   if (viper.IsSet("accesstoken")) {
