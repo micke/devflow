@@ -40,7 +40,8 @@ var fvRegex, _ = regexp.Compile("^fv-(.*)")
 // pullRequestCmd represents the pullRequest command
 var pullRequestCmd = &cobra.Command{
   Use:   "pullRequest",
-  Short: "output a pr template for use with example git",
+  Aliases: []string{"pr", "pull-request", "pullrequest"},
+  Short: "output a pr template for use with example git (Aliased as pr, pull-request and pullrequest)",
   Run: func(cmd *cobra.Command, args []string) {
     storyUrlBase := fmt.Sprintf("%s/entity", baseUrl)
     storyUrlPattern, _ := regexp.Compile(fmt.Sprintf("%s/([0-9]+)", storyUrlBase))
