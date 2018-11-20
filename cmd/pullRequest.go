@@ -27,7 +27,7 @@ import (
   "regexp"
   "strings"
 
-  "github.com/micke/devflow/git"
+  "github.com/micke/devflow/githelpers"
   "github.com/spf13/cobra"
 )
 
@@ -45,7 +45,7 @@ var pullRequestCmd = &cobra.Command{
   Run: func(cmd *cobra.Command, args []string) {
     storyUrlBase := fmt.Sprintf("%s/entity", baseUrl)
     storyUrlPattern, _ := regexp.Compile(fmt.Sprintf("%s/([0-9]+)", storyUrlBase))
-    branch := git.GetCurrentBranch()
+    branch := githelpers.GetCurrentBranch()
     var storyId string
     var storyUrl string
     var title string

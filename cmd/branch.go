@@ -26,10 +26,10 @@ import (
   "regexp"
   "strings"
 
+  "github.com/libgit2/git2go"
+  "github.com/micke/devflow/githelpers"
   "github.com/micke/devflow/targetprocess"
   "github.com/spf13/cobra"
-  "gopkg.in/src-d/go-git.v4"
-  "gopkg.in/src-d/go-git.v4/plumbing"
 )
 
 var cleanerRegex, _ = regexp.Compile("[^\\w-]")
@@ -52,36 +52,13 @@ var branchCmd = &cobra.Command{
       os.Exit(1)
     }
 
-    repo, err := git.PlainOpen(dir)
+    repo, err := git.OpenRepository(dir)
     if err != nil {
       fmt.Printf("Error opening repository: %s\n", err)
       os.Exit(1)
     }
 
-    worktree, err := repo.Worktree()
-    if err != nil {
-      fmt.Printf("Error getting worktree: %s\n", err)
-      os.Exit(1)
-    }
-
-    err = worktree.Checkout(&git.CheckoutOptions{
-      Branch: plumbing.NewBranchReferenceName(branchName),
-    })
-
-    if err == git.ErrBranchNotFound {
-      err = worktree.Checkout(&git.CheckoutOptions{
-        Branch: plumbing.NewBranchReferenceName(branchName),
-        Create: true,
-      })
-
-      if err != nil {
-        fmt.Printf("Error creating branch: %s\n", err)
-        os.Exit(1)
-      }
-    } else if err != nil {
-      fmt.Printf("Error checking out existing branch: %s\n", err)
-      os.Exit(1)
-    }
+    githelpers.CheckoutBranch(repo, branchName)
   },
 }
 
