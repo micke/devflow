@@ -66,13 +66,22 @@ var branchCmd = &cobra.Command{
 
     err = worktree.Checkout(&git.CheckoutOptions{
       Branch: plumbing.NewBranchReferenceName(branchName),
-      Create: true,
     })
 
-    if err != nil {
-      fmt.Printf("Error creating branch: %s\n", err)
+    if err == git.ErrBranchNotFound {
+      err = worktree.Checkout(&git.CheckoutOptions{
+        Branch: plumbing.NewBranchReferenceName(branchName),
+        Create: true,
+      })
+
+      if err != nil {
+        fmt.Printf("Error creating branch: %s\n", err)
+        os.Exit(1)
+      }
+    } else if err != nil {
+      fmt.Printf("Error checking out existing branch: %s\n", err)
+      os.Exit(1)
     }
-    fmt.Println("SUCCESS!")
   },
 }
 
