@@ -22,10 +22,17 @@ package cmd
 
 import (
   "fmt"
+  "os"
+  "regexp"
+  "strings"
 
   "github.com/micke/devflow/targetprocess"
   "github.com/spf13/cobra"
+  "gopkg.in/src-d/go-git.v4"
+  "gopkg.in/src-d/go-git.v4/plumbing"
 )
+
+var cleanerRegex, _ = regexp.Compile("[^\\w-]")
 
 // branchCmd represents the branch command
 var branchCmd = &cobra.Command{
@@ -36,8 +43,36 @@ var branchCmd = &cobra.Command{
       AccessToken: accessToken,
       BaseUrl: baseUrl,
     }.GetAssignments(userId)
-    fmt.Println(resp)
-    fmt.Println("branch called")
+
+    branchName := branchify(resp.SelectAssignment())
+
+    dir, err := os.Getwd()
+    if err != nil {
+      fmt.Printf("Error getting current dir: %s\n", err)
+      os.Exit(1)
+    }
+
+    repo, err := git.PlainOpen(dir)
+    if err != nil {
+      fmt.Printf("Error opening repository: %s\n", err)
+      os.Exit(1)
+    }
+
+    worktree, err := repo.Worktree()
+    if err != nil {
+      fmt.Printf("Error getting worktree: %s\n", err)
+      os.Exit(1)
+    }
+
+    err = worktree.Checkout(&git.CheckoutOptions{
+      Branch: plumbing.NewBranchReferenceName(branchName),
+      Create: true,
+    })
+
+    if err != nil {
+      fmt.Printf("Error creating branch: %s\n", err)
+    }
+    fmt.Println("SUCCESS!")
   },
 }
 
@@ -53,4 +88,15 @@ func init() {
   // Cobra supports local flags which will only run when this command
   // is called directly, e.g.:
   // branchCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func branchify(assignable targetprocess.TPAssignable) string{
+  return fmt.Sprintf("%d-%s", assignable.Id, clean(assignable.Name))
+}
+
+func clean(str string) string{
+  return cleanerRegex.ReplaceAllString(
+    strings.ToLower(strings.Replace(str, " ", "-", -1)),
+    "",
+  )
 }

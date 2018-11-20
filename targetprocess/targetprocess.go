@@ -3,7 +3,9 @@ package targetprocess
 import (
   "fmt"
   "os"
+  "strings"
 
+  "github.com/manifoldco/promptui"
   "gopkg.in/resty.v1"
 )
 
@@ -55,4 +57,41 @@ func (tp TargetProcess) GetAssignments(userId string) *TPAssignments{
   }
 
   return resp.Result().(*TPAssignments)
+}
+
+func (assignments TPAssignments) SelectAssignment() TPAssignable{
+  if (len(assignments.Items) == 1) {
+    return assignments.Items[0].TPAssignable
+  }
+
+  templates := &promptui.SelectTemplates{
+    Label:    "{{ . }}?",
+    Active:   "{{ .Id | cyan }} {{ .Name | yellow }}",
+    Inactive: "{{ .Id | cyan }} {{ .Name }}",
+    Selected: "{{ .Id | green }} {{ .Name | green }}",
+  }
+
+  searcher := func(input string, index int) bool {
+    item := assignments.Items[index]
+    name := strings.Replace(strings.ToLower(item.Name), " ", "", -1)
+    input = strings.Replace(strings.ToLower(input), " ", "", -1)
+
+    return strings.Contains(name, input)
+  }
+
+  prompt := promptui.Select{
+    Label:     "Multiple tasks in progress. Which one are you working on",
+    Items:     assignments.Items,
+    Templates: templates,
+    Size:      4,
+    Searcher:  searcher,
+  }
+
+  i, _, err := prompt.Run()
+
+  if err != nil {
+    os.Exit(1)
+  }
+
+  return assignments.Items[i].TPAssignable
 }

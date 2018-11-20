@@ -51,13 +51,13 @@ var pullRequestCmd = &cobra.Command{
     var title string
 
     // Match branch to find the type of PR to create
-    if (storyRegex.MatchString(branch)) {
+    if storyRegex.MatchString(branch) {
       matches := storyRegex.FindStringSubmatch(branch)
       storyId = matches[1]
       subject := matches[2]
       storyUrl = fmt.Sprintf("%s/%s", storyUrlBase, storyId)
       title = fmt.Sprintf("[%s] %s", storyId, titleize(subject))
-    } else if (fvRegex.MatchString(branch)) {
+    } else if fvRegex.MatchString(branch) {
       matches := fvRegex.FindStringSubmatch(branch)
       subject := matches[1]
       storyUrl = ""
@@ -77,8 +77,8 @@ var pullRequestCmd = &cobra.Command{
       }
     }
 
-    if (storyUrl != "") {
-      if (storyUrlPattern.MatchString(template)) {
+    if storyUrl != "" {
+      if storyUrlPattern.MatchString(template) {
         // Replace placeholder URL if it exists
         template = storyUrlPattern.ReplaceAllString(template, storyUrl)
       } else {
