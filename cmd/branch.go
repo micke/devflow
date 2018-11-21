@@ -22,11 +22,9 @@ package cmd
 
 import (
   "fmt"
-  "os"
   "regexp"
   "strings"
 
-  "github.com/libgit2/git2go"
   "github.com/micke/devflow/githelpers"
   "github.com/micke/devflow/targetprocess"
   "github.com/spf13/cobra"
@@ -39,26 +37,16 @@ var branchCmd = &cobra.Command{
   Use:   "branch",
   Short: "Check out a branch for the story you have in progress",
   Run: func(cmd *cobra.Command, args []string) {
-    resp := targetprocess.TargetProcess{
+    tp := targetprocess.TargetProcess{
       AccessToken: accessToken,
       BaseUrl: baseUrl,
-    }.GetAssignments(userId)
-
-    branchName := branchify(resp.SelectAssignment())
-
-    dir, err := os.Getwd()
-    if err != nil {
-      fmt.Printf("Error getting current dir: %s\n", err)
-      os.Exit(1)
     }
 
-    repo, err := git.OpenRepository(dir)
-    if err != nil {
-      fmt.Printf("Error opening repository: %s\n", err)
-      os.Exit(1)
-    }
+    assignments := tp.GetAssignments(userId)
 
-    githelpers.CheckoutBranch(repo, branchName)
+    branchName := branchify(assignments.SelectAssignment())
+
+    githelpers.CheckoutBranch(branchName)
   },
 }
 
