@@ -32,9 +32,9 @@ import (
 
 var cleanerRegex, _ = regexp.Compile("[^\\w-]")
 
-// branchCmd represents the branch command
-var branchCmd = &cobra.Command{
-  Use:   "branch",
+// checkoutCmd represents the branch command
+var checkoutCmd = &cobra.Command{
+  Use:   "checkout",
   Short: "Check out a branch for the story you have in progress",
   Run: func(cmd *cobra.Command, args []string) {
     tp := targetprocess.TargetProcess{
@@ -51,17 +51,17 @@ var branchCmd = &cobra.Command{
 }
 
 func init() {
-  rootCmd.AddCommand(branchCmd)
+  rootCmd.AddCommand(checkoutCmd)
 
   // Here you will define your flags and configuration settings.
 
   // Cobra supports Persistent Flags which will work for this command
   // and all subcommands, e.g.:
-  // branchCmd.PersistentFlags().String("foo", "", "A help for foo")
+  // checkoutCmd.PersistentFlags().String("foo", "", "A help for foo")
 
   // Cobra supports local flags which will only run when this command
   // is called directly, e.g.:
-  // branchCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+  // checkoutCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 func branchify(assignable targetprocess.TPAssignable) string{

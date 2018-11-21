@@ -22,7 +22,7 @@ This gem aims to solve that.
   * `accesstoken` Your TP access token
   * `baseurl` Your organizations TP URL, ex: `https://project.tpondemand.com`
   * `userid` Your TP user id
-3. run `devflow branch` when starting working on a new story
+3. run `devflow checkout` when starting working on a new story
 4. Profit?
 
 ## Bonus
