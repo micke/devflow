@@ -18,7 +18,7 @@ This gem aims to solve that.
 
 ## How?
 1. Install the binary via homebrew: `brew install micke/devflow/devflow`
-2. The bin accepts settings from flags or it can also read them from config file a file in ~/.devflow.yaml
+2. The bin accepts settings from flags or it can also read them from config file a file in `~/.devflow.yaml`
   * `accesstoken` Your TP access token
   * `baseurl` Your organizations TP URL, ex: `https://project.tpondemand.com`
   * `userid` Your TP user id
