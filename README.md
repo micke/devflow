@@ -1,3 +1,5 @@
+![](https://github.com/micke/devflow/blob/master/docs/demo.gif)
+
 # DevFlow
 __NOTE__: This project is in beta
 
