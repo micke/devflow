@@ -29,7 +29,8 @@ This gem aims to solve that.
 
 Install [hub](https://github.com/github/hub) and configure hub to work with
 devflow. This will use the `pr` command from devflow to populate your template
-with story id, url and title.
+with story id, url and title. After setting this up all you need to do is run
+`git p-r`
 
 ### To open the PR in your `$EDITOR`
 ```
