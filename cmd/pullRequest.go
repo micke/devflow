@@ -56,7 +56,7 @@ var pullRequestCmd = &cobra.Command{
       storyId = matches[1]
       subject := matches[2]
       storyUrl = fmt.Sprintf("%s/%s", storyUrlBase, storyId)
-      title = fmt.Sprintf("[%s] %s", storyId, titleize(subject))
+      title = fmt.Sprintf("[#%s] %s", storyId, titleize(subject))
     } else if fvRegex.MatchString(branch) {
       matches := fvRegex.FindStringSubmatch(branch)
       subject := matches[1]
