@@ -22,13 +22,23 @@ This gem aims to solve that.
   * `accesstoken` Your TP access token
   * `baseurl` Your organizations TP URL, ex: `https://project.tpondemand.com`
   * `userid` Your TP user id
-3. run `devflow checkout` when starting working on a new story
+3. run `devflow checkout` when you start work on a new story
 4. Profit?
 
-## Bonus
-Install [hub](https://github.com/github/hub) and add to your .gitconfig;
+# Bonus
+
+Install [hub](https://github.com/github/hub) and configure hub to work with
+devflow. This will use the `pr` command from devflow to populate your template
+with story id, url and title.
+
+### To open the PR in your `$EDITOR`
 ```
 [alias]
   p-r = "!devflow pr | hub -c core.commentChar=';' pull-request -oe -F -"
 ```
-Now you can easily create PRs from the commandline!
+
+### To open the PR in your browser directly
+```
+[alias]
+  p-r = "!devflow pr | hub -c core.commentChar=';' pull-request -o --no-edit -F -"
+```
