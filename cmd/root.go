@@ -84,6 +84,7 @@ func initConfig() {
 
     // Search config in home directory with name ".devflow" (without extension).
     viper.AddConfigPath(home)
+    viper.AddConfigPath(home + "/.config")
     viper.SetConfigName(".devflow")
   }
 
