@@ -1,4 +1,6 @@
 # DevFlow
+![](https://github.com/micke/devflow/blob/master/demo.gif)
+
 __NOTE__: This project is in beta
 
 This is mainly for my fellow friends at ApoEx.
