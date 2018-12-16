@@ -25,7 +25,7 @@ import (
   "regexp"
   "strings"
 
-  "github.com/manifoldco/promptui"
+  "github.com/micke/promptui"
   "github.com/micke/devflow/githelpers"
   "github.com/micke/devflow/targetprocess"
   "github.com/spf13/cobra"
@@ -45,12 +45,14 @@ var checkoutCmd = &cobra.Command{
 
     assignments := tp.GetAssignments(userId)
 
-    branchName := branchify(assignments.SelectAssignment())
+    assignment := assignments.SelectAssignment()
+    branchName := branchify(assignment)
 
     prompt := promptui.Prompt{
       Label:     "Branch name",
       Default:   branchName,
-      AllowEdit: true,
+      DefaultAfterEdit: fmt.Sprintf("%d-", assignment.Id),
+      AllowEdit: false,
     }
 
     branchName, err := prompt.Run()
