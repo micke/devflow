@@ -47,21 +47,30 @@ var checkoutCmd = &cobra.Command{
 
     assignment := assignments.SelectAssignment()
     branchName := branchify(assignment)
+    branchPrefix := fmt.Sprintf("%d-", assignment.Id)
+    branchPattern, _ := regexp.Compile("^" + branchPrefix)
+    existingBranch := githelpers.ExistingBranchForPattern(branchPattern)
 
-    prompt := promptui.Prompt{
-      Label:     "Branch name",
-      Default:   branchName,
-      DefaultAfterEdit: fmt.Sprintf("%d-", assignment.Id),
-      AllowEdit: false,
-    }
+    if existingBranch != nil {
+      fmt.Printf("Found existing branch matching story: %s\n", *existingBranch)
+      branchName = *existingBranch
+    } else {
+      prompt := promptui.Prompt{
+        Label:     "Branch name",
+        Default:   branchName,
+        DefaultAfterEdit: branchPrefix,
+        AllowEdit: false,
+      }
 
-    branchName, err := prompt.Run()
+      var err error
+      branchName, err = prompt.Run()
 
-    if err == promptui.ErrInterrupt {
-      return
-    } else if err != nil {
-      fmt.Printf("Prompt failed %v\n", err)
-      return
+      if err == promptui.ErrInterrupt {
+        return
+      } else if err != nil {
+        fmt.Printf("Prompt failed %v\n", err)
+        return
+      }
     }
 
     githelpers.CheckoutBranch(branchName)

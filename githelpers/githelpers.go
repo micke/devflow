@@ -3,11 +3,12 @@ package githelpers
 import (
   "fmt"
   "os"
+  "regexp"
 
   "github.com/libgit2/git2go"
 )
 
-func GetCurrentBranch() string{
+func GetCurrentBranch() string {
   repo := getRepo()
 
   head, err := repo.Head()
@@ -17,6 +18,27 @@ func GetCurrentBranch() string{
   checkFail("Failed to get branch name", err)
 
   return branchName
+}
+
+func ExistingBranchForPattern(pattern *regexp.Regexp) *string {
+  var matchingBranch *string
+  repo := getRepo()
+
+  branchIterator, err := repo.NewBranchIterator(git.BranchAll)
+  checkFail("Failed to get branch iterator", err)
+
+  f := func(branch *git.Branch, t git.BranchType) error {
+    branchName, err := branch.Name()
+    if err == nil && pattern.MatchString(branchName) {
+      matchingBranch = &branchName
+    }
+
+    return nil
+  }
+
+  branchIterator.ForEach(f)
+
+  return matchingBranch
 }
 
 func CheckoutBranch(branchName string) error {
