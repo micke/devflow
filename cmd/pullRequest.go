@@ -36,6 +36,7 @@ var prTemplatePaths = []string{
 }
 var storyRegex, _ = regexp.Compile("^([0-9]+)-(.*)")
 var fvRegex, _ = regexp.Compile("^fv-(.*)")
+var tpHeaderRegex, _ = regexp.Compile("\n*#+\\s*TP")
 
 // pullRequestCmd represents the pullRequest command
 var pullRequestCmd = &cobra.Command{
@@ -77,7 +78,11 @@ var pullRequestCmd = &cobra.Command{
       }
     }
 
-    if storyUrl != "" {
+    if storyUrl == "" {
+			// Remove any storyUrl and TP header from the template
+			template = storyUrlPattern.ReplaceAllString(template, "")
+			template = tpHeaderRegex.ReplaceAllString(template, "")
+		} else {
       if storyUrlPattern.MatchString(template) {
         // Replace placeholder URL if it exists
         template = storyUrlPattern.ReplaceAllString(template, storyUrl)
