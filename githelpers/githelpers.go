@@ -45,7 +45,8 @@ func CheckoutBranch(branchName string) error {
   var commit *git.Commit
   repo := getRepo()
   checkoutOpts := &git.CheckoutOpts{
-    Strategy: git.CheckoutSafe | git.CheckoutRecreateMissing | git.CheckoutAllowConflicts | git.CheckoutUseTheirs,
+    Strategy: git.CheckoutSafe | git.CheckoutRecreateMissing |
+							git.CheckoutAllowConflicts | git.CheckoutUseTheirs,
   }
 
   branch, err := repo.LookupBranch(branchName, git.BranchLocal)
@@ -99,7 +100,7 @@ func getWd() string{
 }
 
 func getRepo() *git.Repository{
-  repo, err := git.OpenRepository(getWd())
+  repo, err := git.OpenRepositoryExtended(getWd(), 0, "/")
   checkFail("Error opening repository", err)
 
   return repo
