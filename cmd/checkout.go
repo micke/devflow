@@ -54,9 +54,9 @@ var checkoutCmd = &cobra.Command{
 		if existingBranch != nil {
 			fmt.Printf("Found existing branch matching story: %s\n", *existingBranch)
 			prompt := promptui.Prompt{
-				Label:		 "Do you want to switch to this branch?",
+				Label:     "Do you want to switch to this branch?",
 				IsConfirm: true,
-				Default: "y",
+				Default:   "y",
 			}
 
 			confirmed, err := prompt.Run()
@@ -74,10 +74,10 @@ var checkoutCmd = &cobra.Command{
 
 		if existingBranch == nil {
 			prompt := promptui.Prompt{
-				Label:		 "Branch name",
-				Default:	 branchName,
+				Label:            "Branch name",
+				Default:          branchName,
 				DefaultAfterEdit: branchPrefix,
-				AllowEdit: false,
+				AllowEdit:        false,
 			}
 
 			var err error
@@ -98,15 +98,7 @@ var checkoutCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(checkoutCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// checkoutCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// checkoutCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	checkoutCmd.Flags().BoolP("master", "m", false, "Create this feature branch from master")
 }
 
 func branchify(assignable targetprocess.TPAssignable) string{
