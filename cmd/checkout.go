@@ -21,49 +21,49 @@
 package cmd
 
 import (
-  "fmt"
-  "regexp"
-  "strings"
+	"fmt"
+	"regexp"
+	"strings"
 
-  "github.com/micke/promptui"
-  "github.com/micke/devflow/githelpers"
-  "github.com/micke/devflow/targetprocess"
-  "github.com/spf13/cobra"
+	"github.com/micke/promptui"
+	"github.com/micke/devflow/githelpers"
+	"github.com/micke/devflow/targetprocess"
+	"github.com/spf13/cobra"
 )
 
 var cleanerRegex, _ = regexp.Compile("[^\\w-]")
 
 // checkoutCmd represents the branch command
 var checkoutCmd = &cobra.Command{
-  Use:   "checkout",
-  Short: "Check out a branch for the story you have in progress",
-  Run: func(cmd *cobra.Command, args []string) {
-    tp := targetprocess.TargetProcess{
-      AccessToken: accessToken,
-      BaseUrl: baseUrl,
-    }
+	Use:	 "checkout",
+	Short: "Check out a branch for the story you have in progress",
+	Run: func(cmd *cobra.Command, args []string) {
+		tp := targetprocess.TargetProcess{
+			AccessToken: accessToken,
+			BaseUrl: baseUrl,
+		}
 
-    assignments := tp.GetAssignments(userId)
+		assignments := tp.GetAssignments(userId)
 
-    assignment := assignments.SelectAssignment()
-    branchName := branchify(assignment)
-    branchPrefix := fmt.Sprintf("%d-", assignment.Id)
-    branchPattern, _ := regexp.Compile("^" + branchPrefix)
-    existingBranch := githelpers.ExistingBranchForPattern(branchPattern)
+		assignment := assignments.SelectAssignment()
+		branchName := branchify(assignment)
+		branchPrefix := fmt.Sprintf("%d-", assignment.Id)
+		branchPattern, _ := regexp.Compile("^" + branchPrefix)
+		existingBranch := githelpers.ExistingBranchForPattern(branchPattern)
 
-    if existingBranch != nil {
-      fmt.Printf("Found existing branch matching story: %s\n", *existingBranch)
-      prompt := promptui.Prompt{
-        Label:     "Do you want to switch to this branch?",
-        IsConfirm: true,
+		if existingBranch != nil {
+			fmt.Printf("Found existing branch matching story: %s\n", *existingBranch)
+			prompt := promptui.Prompt{
+				Label:		 "Do you want to switch to this branch?",
+				IsConfirm: true,
 				Default: "y",
-      }
+			}
 
 			confirmed, err := prompt.Run()
 
-      if err == promptui.ErrInterrupt {
-        return
-      }
+			if err == promptui.ErrInterrupt {
+				return
+			}
 
 			if confirmed != "n" {
 				branchName = *existingBranch
@@ -72,50 +72,50 @@ var checkoutCmd = &cobra.Command{
 			}
 		}
 
-    if existingBranch == nil {
-      prompt := promptui.Prompt{
-        Label:     "Branch name",
-        Default:   branchName,
-        DefaultAfterEdit: branchPrefix,
-        AllowEdit: false,
-      }
+		if existingBranch == nil {
+			prompt := promptui.Prompt{
+				Label:		 "Branch name",
+				Default:	 branchName,
+				DefaultAfterEdit: branchPrefix,
+				AllowEdit: false,
+			}
 
-      var err error
-      branchName, err = prompt.Run()
+			var err error
+			branchName, err = prompt.Run()
 
-      if err == promptui.ErrInterrupt {
-        return
-      } else if err != nil {
-        fmt.Printf("Prompt failed %v\n", err)
-        return
-      }
-    }
+			if err == promptui.ErrInterrupt {
+				return
+			} else if err != nil {
+				fmt.Printf("Prompt failed %v\n", err)
+				return
+			}
+		}
 
-    githelpers.CheckoutBranch(branchName)
-  },
+		githelpers.CheckoutBranch(branchName)
+	},
 }
 
 func init() {
-  rootCmd.AddCommand(checkoutCmd)
+	rootCmd.AddCommand(checkoutCmd)
 
-  // Here you will define your flags and configuration settings.
+	// Here you will define your flags and configuration settings.
 
-  // Cobra supports Persistent Flags which will work for this command
-  // and all subcommands, e.g.:
-  // checkoutCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// checkoutCmd.PersistentFlags().String("foo", "", "A help for foo")
 
-  // Cobra supports local flags which will only run when this command
-  // is called directly, e.g.:
-  // checkoutCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// checkoutCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 func branchify(assignable targetprocess.TPAssignable) string{
-  return fmt.Sprintf("%d-%s", assignable.Id, clean(assignable.Name))
+	return fmt.Sprintf("%d-%s", assignable.Id, clean(assignable.Name))
 }
 
 func clean(str string) string{
-  return cleanerRegex.ReplaceAllString(
-    strings.ToLower(strings.Replace(str, " ", "-", -1)),
-    "",
-  )
+	return cleanerRegex.ReplaceAllString(
+		strings.ToLower(strings.Replace(str, " ", "-", -1)),
+		"",
+	)
 }
