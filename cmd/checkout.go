@@ -53,8 +53,26 @@ var checkoutCmd = &cobra.Command{
 
     if existingBranch != nil {
       fmt.Printf("Found existing branch matching story: %s\n", *existingBranch)
-      branchName = *existingBranch
-    } else {
+      prompt := promptui.Prompt{
+        Label:     "Do you want to switch to this branch?",
+        IsConfirm: true,
+				Default: "y",
+      }
+
+			confirmed, err := prompt.Run()
+
+      if err == promptui.ErrInterrupt {
+        return
+      }
+
+			if confirmed != "n" {
+				branchName = *existingBranch
+			} else {
+				existingBranch = nil
+			}
+		}
+
+    if existingBranch == nil {
       prompt := promptui.Prompt{
         Label:     "Branch name",
         Default:   branchName,
