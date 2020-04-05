@@ -11,7 +11,7 @@ import (
 
 type TargetProcess struct {
 	AccessToken string
-	BaseUrl string
+	BaseUrl     string
 }
 
 type TPAssignments struct {
@@ -23,14 +23,14 @@ type TPAssignment struct {
 }
 
 type TPAssignable struct {
-	Id int
+	Id   int
 	Name string
 }
 
-func (tp TargetProcess) client() *resty.Client{
+func (tp TargetProcess) client() *resty.Client {
 	return resty.New().
 		SetQueryParams(map[string]string{
-			"format": "json",
+			"format":       "json",
 			"access_token": tp.AccessToken,
 		}).
 		SetHeader("Content-Type", "application/json").
@@ -38,14 +38,14 @@ func (tp TargetProcess) client() *resty.Client{
 		SetHostURL(tp.BaseUrl)
 }
 
-func (tp TargetProcess) request() *resty.Request{
+func (tp TargetProcess) request() *resty.Request {
 	return tp.client().R()
 }
 
-func (tp TargetProcess) GetAssignments(userId string) *TPAssignments{
+func (tp TargetProcess) GetAssignments(userId string) *TPAssignments {
 	resp, err := tp.request().
 		SetQueryParams(map[string]string{
-			"where": fmt.Sprintf("(GeneralUser.Id eq %s)and(Assignable.EntityState.Name eq 'In Progress')", userId),
+			"where":   fmt.Sprintf("(GeneralUser.Id eq %s)and(Assignable.EntityState.Name eq 'In Progress')", userId),
 			"include": "[Assignable[Id,Name]]",
 		}).
 		SetResult(TPAssignments{}).
@@ -59,14 +59,14 @@ func (tp TargetProcess) GetAssignments(userId string) *TPAssignments{
 	return resp.Result().(*TPAssignments)
 }
 
-func (assignments TPAssignments) SelectAssignment() TPAssignable{
-	if (len(assignments.Items) == 1) {
+func (assignments TPAssignments) SelectAssignment() TPAssignable {
+	if len(assignments.Items) == 1 {
 		return assignments.Items[0].TPAssignable
 	}
 
 	templates := &promptui.SelectTemplates{
-		Label:		"{{ . }}?",
-		Active:		"{{ .Id | cyan }} {{ .Name | yellow }}",
+		Label:    "{{ . }}?",
+		Active:   "{{ .Id | cyan }} {{ .Name | yellow }}",
 		Inactive: "{{ .Id | cyan }} {{ .Name }}",
 		Selected: "{{ .Id | green }} {{ .Name | green }}",
 	}
@@ -80,10 +80,10 @@ func (assignments TPAssignments) SelectAssignment() TPAssignable{
 	}
 
 	prompt := promptui.Select{
-		Label:		 "Multiple tasks in progress. Which one are you working on",
-		Items:		 assignments.Items,
+		Label:     "Multiple tasks in progress. Which one are you working on",
+		Items:     assignments.Items,
 		Templates: templates,
-		Size:			 4,
+		Size:      4,
 		Searcher:  searcher,
 	}
 

@@ -5,7 +5,7 @@ import (
 	"os"
 	"regexp"
 
-	"github.com/libgit2/git2go"
+	git "github.com/libgit2/git2go/v29"
 )
 
 func GetCurrentBranch() string {
@@ -46,14 +46,14 @@ func CheckoutBranch(branchName string) error {
 	repo := getRepo()
 	checkoutOpts := &git.CheckoutOpts{
 		Strategy: git.CheckoutSafe | git.CheckoutRecreateMissing |
-							git.CheckoutAllowConflicts | git.CheckoutUseTheirs,
+			git.CheckoutAllowConflicts | git.CheckoutUseTheirs,
 	}
 
 	branch, err := repo.LookupBranch(branchName, git.BranchLocal)
 	if err == nil {
-			fmt.Printf("Switched to branch '%s'\n", branchName)
+		fmt.Printf("Switched to branch '%s'\n", branchName)
 	} else {
-		remoteBranch, err := repo.LookupBranch("origin/" + branchName, git.BranchRemote)
+		remoteBranch, err := repo.LookupBranch("origin/"+branchName, git.BranchRemote)
 		if err == nil {
 			// Find commit for remote branch
 			commit, err = repo.LookupCommit(remoteBranch.Target())
@@ -92,14 +92,14 @@ func CheckoutBranch(branchName string) error {
 	return nil
 }
 
-func getWd() string{
+func getWd() string {
 	dir, err := os.Getwd()
 	checkFail("Error getting current dir", err)
 
 	return dir
 }
 
-func getRepo() *git.Repository{
+func getRepo() *git.Repository {
 	repo, err := git.OpenRepositoryExtended(getWd(), 0, "/")
 	checkFail("Error opening repository", err)
 
