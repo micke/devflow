@@ -26,7 +26,7 @@ var checkoutCmd = &cobra.Command{
 
 		var branchName string
 		assignment := assignments.SelectAssignment()
-		branchPrefix := fmt.Sprintf("%d-", assignment.Id)
+		branchPrefix := fmt.Sprintf("tp%d-", assignment.Id)
 		branchPattern, _ := regexp.Compile("^" + branchPrefix)
 		existingBranch := githelpers.ExistingBranchForPattern(branchPattern)
 
