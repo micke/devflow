@@ -1,3 +1,5 @@
+set -e
+
 mkdir -p build/mac
 mkdir -p build/linux
 go build --tags "static" -o build/mac/devflow main.go

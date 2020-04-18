@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var cleanerRegex, _ = regexp.Compile("[^\\w-]")
+var cleanerRegex = regexp.MustCompile("[^\\w-]")
 
 // checkoutCmd represents the branch command
 var checkoutCmd = &cobra.Command{
@@ -19,15 +19,15 @@ var checkoutCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		tp := targetprocess.TargetProcess{
 			AccessToken: accessToken,
-			BaseUrl:     baseUrl,
+			BaseURL:     baseURL,
 		}
 
-		assignments := tp.GetAssignments(userId)
+		assignments := tp.GetAssignments(userID)
 
 		var branchName string
 		assignment := assignments.SelectAssignment()
-		branchPrefix := fmt.Sprintf("tp%d-", assignment.Id)
-		branchPattern, _ := regexp.Compile("^" + branchPrefix)
+		branchPrefix := fmt.Sprintf("tp%d-", assignment.ID)
+		branchPattern := regexp.MustCompile("^" + branchPrefix)
 		existingBranch := githelpers.ExistingBranchForPattern(branchPattern)
 
 		if existingBranch != nil {

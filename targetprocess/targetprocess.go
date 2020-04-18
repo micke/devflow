@@ -11,7 +11,7 @@ import (
 
 type TargetProcess struct {
 	AccessToken string
-	BaseUrl     string
+	BaseURL     string
 }
 
 type TPAssignments struct {
@@ -23,7 +23,7 @@ type TPAssignment struct {
 }
 
 type TPAssignable struct {
-	Id   int
+	ID   int
 	Name string
 }
 
@@ -35,18 +35,18 @@ func (tp TargetProcess) client() *resty.Client {
 		}).
 		SetHeader("Content-Type", "application/json").
 		SetHeader("Accept", "application/json").
-		SetHostURL(tp.BaseUrl)
+		SetHostURL(tp.BaseURL)
 }
 
 func (tp TargetProcess) request() *resty.Request {
 	return tp.client().R()
 }
 
-func (tp TargetProcess) GetAssignments(userId string) *TPAssignments {
+func (tp TargetProcess) GetAssignments(userID string) *TPAssignments {
 	resp, err := tp.request().
 		SetQueryParams(map[string]string{
-			"where":   fmt.Sprintf("(GeneralUser.Id eq %s)and(Assignable.EntityState.Name eq 'In Progress')", userId),
-			"include": "[Assignable[Id,Name]]",
+			"where":   fmt.Sprintf("(GeneralUser.ID eq %s)and(Assignable.EntityState.Name eq 'In Progress')", userID),
+			"include": "[Assignable[ID,Name]]",
 		}).
 		SetResult(TPAssignments{}).
 		Get("/api/v1/assignments")
@@ -66,9 +66,9 @@ func (assignments TPAssignments) SelectAssignment() TPAssignable {
 
 	templates := &promptui.SelectTemplates{
 		Label:    "{{ . }}?",
-		Active:   "{{ .Id | cyan }} {{ .Name | yellow }}",
-		Inactive: "{{ .Id | cyan }} {{ .Name }}",
-		Selected: "{{ .Id | green }} {{ .Name | green }}",
+		Active:   "{{ .ID | cyan }} {{ .Name | yellow }}",
+		Inactive: "{{ .ID | cyan }} {{ .Name }}",
+		Selected: "{{ .ID | green }} {{ .Name | green }}",
 	}
 
 	searcher := func(input string, index int) bool {

@@ -11,8 +11,8 @@ import (
 var verbose bool
 var cfgFile string
 var accessToken string
-var baseUrl string
-var userId string
+var baseURL string
+var userID string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -83,13 +83,13 @@ func initConfig() {
 		os.Exit(1)
 	}
 	if viper.IsSet("baseurl") {
-		baseUrl = viper.GetString("baseurl")
+		baseURL = viper.GetString("baseurl")
 	} else {
 		fmt.Println("baseurl is not set")
 		os.Exit(1)
 	}
 	if viper.IsSet("userid") {
-		userId = viper.GetString("userid")
+		userID = viper.GetString("userid")
 	} else {
 		fmt.Println("userid is not set")
 		os.Exit(1)

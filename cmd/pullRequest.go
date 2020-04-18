@@ -14,9 +14,9 @@ import (
 var prTemplatePaths = []string{
 	".github/PULL_REQUEST_TEMPLATE.md",
 }
-var storyRegex, _ = regexp.Compile("^([0-9]+)-(.*)")
-var fvRegex, _ = regexp.Compile("^fv-(.*)")
-var tpHeaderRegex, _ = regexp.Compile("\n*#+\\s*TP")
+var storyRegex = regexp.MustCompile("^tp([0-9]+)-(.*)")
+var fvRegex = regexp.MustCompile("^fv-(.*)")
+var tpHeaderRegex = regexp.MustCompile("\n*#+\\s*TP")
 
 // pullRequestCmd represents the pullRequest command
 var pullRequestCmd = &cobra.Command{
@@ -24,27 +24,27 @@ var pullRequestCmd = &cobra.Command{
 	Aliases: []string{"pr", "pull-request", "pullrequest"},
 	Short:   "output a pr template for use with example git (Aliased as pr, pull-request and pullrequest)",
 	Run: func(cmd *cobra.Command, args []string) {
-		storyUrlBase := fmt.Sprintf("%s/entity", baseUrl)
-		storyUrlPattern, _ := regexp.Compile(fmt.Sprintf("%s/([0-9]+)", storyUrlBase))
+		storyURLBase := fmt.Sprintf("%s/entity", baseURL)
+		storyURLPattern := regexp.MustCompile(fmt.Sprintf("%s/([0-9]+)", storyURLBase))
 		branch := githelpers.GetCurrentBranch()
-		var storyId string
-		var storyUrl string
+		var storyID string
+		var storyURL string
 		var title string
 
 		// Match branch to find the type of PR to create
 		if storyRegex.MatchString(branch) {
 			matches := storyRegex.FindStringSubmatch(branch)
-			storyId = matches[1]
+			storyID = matches[1]
 			subject := matches[2]
-			storyUrl = fmt.Sprintf("%s/%s", storyUrlBase, storyId)
-			title = fmt.Sprintf("[#%s] %s", storyId, titleize(subject))
+			storyURL = fmt.Sprintf("%s/%s", storyURLBase, storyID)
+			title = fmt.Sprintf("[#%s] %s", storyID, titleize(subject))
 		} else if fvRegex.MatchString(branch) {
 			matches := fvRegex.FindStringSubmatch(branch)
 			subject := matches[1]
-			storyUrl = ""
+			storyURL = ""
 			title = fmt.Sprintf("[FV] %s", titleize(subject))
 		} else {
-			storyUrl = ""
+			storyURL = ""
 			title = titleize(branch)
 		}
 
@@ -58,17 +58,17 @@ var pullRequestCmd = &cobra.Command{
 			}
 		}
 
-		if storyUrl == "" {
-			// Remove any storyUrl and TP header from the template
-			template = storyUrlPattern.ReplaceAllString(template, "")
+		if storyURL == "" {
+			// Remove any storyURL and TP header from the template
+			template = storyURLPattern.ReplaceAllString(template, "")
 			template = tpHeaderRegex.ReplaceAllString(template, "")
 		} else {
-			if storyUrlPattern.MatchString(template) {
+			if storyURLPattern.MatchString(template) {
 				// Replace placeholder URL if it exists
-				template = storyUrlPattern.ReplaceAllString(template, storyUrl)
+				template = storyURLPattern.ReplaceAllString(template, storyURL)
 			} else {
 				// Otherwise just append it after some artistic newlines
-				template = fmt.Sprintf("%s\n\n%s\n", template, storyUrl)
+				template = fmt.Sprintf("%s\n\n%s\n", template, storyURL)
 			}
 		}
 
