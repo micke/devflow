@@ -1,0 +1,52 @@
+before:
+  hooks:
+    - go mod tidy
+    - ./generate_completions.sh
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+      - 386
+    tags:
+      - static
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+
+archives:
+  - files:
+      - README.md
+      - LICENSE
+      - completions/*
+
+brews:
+  - tap:
+      owner: micke
+      name: homebrew-devflow
+    homepage: https://github.com/micke/devflow
+    description: Utility to create new branches
+    license: MIT
+    test: system "#{bin}/devflow", "--help"
+    install: |
+      bin.install "{{ .ProjectName }}"
+
+      bash_completion.install "completions/{{ .ProjectName }}.bash" => "{{ .ProjectName }}"
+      zsh_completion.install "completions/{{ .ProjectName }}.zsh" => "_{{ .ProjectName }}"
+      fish_completion.install "completions/{{ .ProjectName }}.fish" => "_{{ .ProjectName }}"
+

@@ -5,7 +5,7 @@ import (
 	"os"
 	"regexp"
 
-	git "github.com/libgit2/git2go/v29"
+	git "github.com/libgit2/git2go/v33"
 )
 
 func GetCurrentBranch() string {
