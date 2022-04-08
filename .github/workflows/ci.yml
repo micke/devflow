@@ -54,7 +54,14 @@ jobs:
           go mod edit -replace github.com/libgit2/git2go/v33=./git2go
 
       - name: Build
-        run: go build --tags "static"
+        run: |
+          git clone https://github.com/libgit2/git2go.git git2go
+          cd git2go
+          git checkout v33.0.9
+          git submodule update --init
+          make install-static
+          go mod edit -replace github.com/libgit2/git2go/v33=./git2go
+          go build --tags "static"
         env:
           GOOS: ${{ matrix.os.target }}
           GOARCH: ${{ matrix.arch }}
