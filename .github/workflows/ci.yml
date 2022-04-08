@@ -44,15 +44,6 @@ jobs:
         with:
           go-version: 1.17
 
-      - name: Set up libgit2
-        run: |
-          git clone https://github.com/libgit2/git2go.git git2go
-          cd git2go
-          git checkout v33.0.9
-          git submodule update --init
-          make install-static
-          go mod edit -replace github.com/libgit2/git2go/v33=./git2go
-
       - name: Build
         run: |
           git clone https://github.com/libgit2/git2go.git git2go
