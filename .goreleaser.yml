@@ -4,9 +4,7 @@ before:
     - ./generate_completions.sh
 
 builds:
-  - env:
-      - CGO_ENABLED=0
-    goos:
+  - goos:
       - linux
       - darwin
     goarch:
